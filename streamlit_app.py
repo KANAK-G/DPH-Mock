@@ -1,97 +1,10 @@
 import pandas as pd
-import numpy as np
-import random
-from datetime import datetime, timedelta
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 
-
-
-# Set random seed for reproducibility
-np.random.seed(42)
-random.seed(42)
-
-# 1. Generate Query IDs
-query_ids = range(1, 10001)
-
-# 2. Generate Query Texts (some duplicates)
-sql_queries = ["SELECT * FROM table1;", "SELECT * FROM table2 WHERE condition;",
-               "UPDATE table3 SET column = value;", "DELETE FROM table4 WHERE condition;",
-               "INSERT INTO table5 (columns) VALUES (values);"]
-query_texts = np.random.choice(sql_queries, size=10000, p=[0.2, 0.3, 0.2, 0.2, 0.1])
-
-# 3. Generate User IDs and assign to data products
-user_ids = list(range(1, 51))
-data_products = ['device360', 'customer360', 'store360', 'sales360']
-
-# Distribute users across data products
-user_data_product = {}
-for i, dp in enumerate(data_products):
-    start_idx = i * 10
-    end_idx = start_idx + (10 if i != 3 else 15)
-    for user_id in user_ids[start_idx:end_idx]:
-        user_data_product[user_id] = dp
-
-# Distribute queries across data products
-queries_per_product = {'device360': 4000, 'customer360': 2500, 'store360': 2000, 'sales360': 1500}
-user_queries = []
-
-for dp, count in queries_per_product.items():
-    users = [user for user, product in user_data_product.items() if product == dp]
-    user_queries.extend(random.choices(users, k=count))
-
-# 4. Generate Dataset IDs
-dataset_ids = {dp: [f'{dp}_dataset_{i}' for i in range(1, 21)] for dp in data_products}
-query_dataset_ids = [random.choice(dataset_ids[user_data_product[user_id]]) for user_id in user_queries]
-
-# 5. Generate Error Texts
-errors = ["system generated error", "syntax related error", "resource exceed error", None]
-error_texts = np.random.choice(errors, size=10000, p=[0.05, 0.05, 0.05, 0.85])
-
-# 6. Generate Memory Usage
-memory_usage = np.random.uniform(10, 20, size=10000).round(2)
-
-# 7. Generate Compute Usage
-compute_usage = np.random.uniform(10, 20, size=10000).round(2)
-
-# 8. Generate Data Processed
-data_processed = np.random.uniform(10, 20, size=10000).round(2)
-
-# 9. Generate Date Column
-end_date = datetime.now()
-start_date = end_date - timedelta(days=60)
-date_range = pd.date_range(start_date, end_date)
-dates = np.random.choice(date_range, size=10000)
-
-# 10. Generate Data Product Name
-dp_names = [user_data_product[user_id] for user_id in user_queries]
-
-# Create DataFrame
-data = {
-    'Query ID': query_ids,
-    'Query Text': query_texts,
-    'User ID': user_queries,
-    'Dataset ID': query_dataset_ids,
-    'Error Text': error_texts,
-    'Memory Usage (GB)': memory_usage,
-    'Compute Usage (GB)': compute_usage,
-    'Data Processed (GB)': data_processed,
-    'Date': dates,
-    'Data Product Name': dp_names
-}
-
-df = pd.DataFrame(data)
-
-# Save to CSV
-# df.to_csv('mock_data.csv', index=False)
-
-# Display first few rows
-# df.head()
-
-# # Load the mock data
-# df = pd.read_csv('mock_data.csv')
+# Load the mock data
+df = pd.read_csv('mock_data.csv')
 
 # Set plot style
 sns.set(style="whitegrid")
